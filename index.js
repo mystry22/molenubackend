@@ -21,7 +21,7 @@ app.use('/api/cart',cart);
 app.use('/api/product',product);
 
 
-const PORT = 3222;
+const PORT = process.env.PORT || 3222;
 
 app.listen(PORT, ()=>{
     console.log('listening to port ' + PORT);
