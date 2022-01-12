@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {getCustomDate} = require('../utility_functions/util_func');
 const {createNewProduct,uploadProductImage,deleteProduct,editProduct,homeProducts,allProducts,createCategory,allCategories,prodInfo} = require('../model/ProductHelper');
+const {cloudinary} = require('../utility_functions/cloudinary');
 
 router.post('/addproduct',(req,res)=>{
     const data = {
@@ -26,26 +27,33 @@ router.post('/addproduct',(req,res)=>{
 });
 
 router.post('/addprodimage',async(req,res)=>{
-
-    const file = req.files.image
-    const image_link = req.files.image.name;
+    const filestr = req.body.image;
     const prod_id = req.body.prod_id;
+    
 
-   
-        await file.mv(`./assets/img/prod/${file.name}`,err=>{
-            if(err){
-                res.json('Product Image Upload  Not Successful 1');
-                console.log(err)
-            }else{
-                uploadProductImage(prod_id,image_link).then(feed =>{
+    try{
+        const response = await cloudinary.uploader.
+        upload(filestr,{
+            upload_preset: 'molenu',
+        });
+        if(response){
+            const image_link = response.secure_url;
+
+            uploadProductImage(prod_id,image_link).then(feed =>{
                     if(feed == 'ok'){
                         res.json('Product Image Upload Successful');
                     }else{
                         res.json('Product Image Upload Not Successful 2');
-                    }
-                })
-            }
-        });
+                        }
+            })
+        }
+        
+        
+    }catch(error){
+        console.log(error)
+    }
+
+    
     
    
 });
@@ -69,7 +77,7 @@ router.post('/editproduct',(req,res)=>{
     const price = req.body.price;
     const old_price = req.body.old_price;
     const cat_name = req.body.cat_name;
-    const description = req.body.description;
+    const description = req.body.prod_desc;
     const display_home = req.body.display_home;
 
     editProduct(prod_id,prod_name,price,old_price,cat_name,description,display_home)
@@ -88,16 +96,17 @@ router.post('/homeproducts',async(req,res)=>{
 });
 
 router.post('/allproducts',async(req,res)=>{
-    const allProducts = await allProducts();
-    res.json(allProducts);
+    const allproducts = await allProducts();
+    res.json(allproducts);
 });
 
 router.post('/productinfo',async(req,res)=>{
+    
     const data = {
         prod_id:req.body.prod_id
     }
     
-    const allProducts = await prodInfo();
+    const allProducts = await prodInfo(data);
     res.json(allProducts);
 });
 

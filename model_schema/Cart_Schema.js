@@ -10,6 +10,11 @@ const Cart = new mongoose.Schema({
         min: 2,
         max: 1005
     },
+    image_link: {
+        type: String,
+        min: 2,
+        max: 1005
+    },
     prod_id: {
         type: String,
         min: 2,
@@ -29,7 +34,21 @@ const Cart = new mongoose.Schema({
         type: String,
         min: 2,
         max: 1005
-    }
+    },
+    subtotal : {
+        type: Number,
+    
+    },
+    size: {
+        type: String
+    },
+    qty: {
+        type: String
+    },
+    description: {
+        type: String
+    },
+    
     
     
  
