@@ -20,7 +20,17 @@ const Product = new mongoose.Schema({
         min: 2,
         max: 1005
     },
+    price_usd: {
+        type: String,
+        min: 2,
+        max: 1005
+    },
     old_price: {
+        type: String,
+        min: 2,
+        max: 1005
+    },
+    old_price_usd: {
         type: String,
         min: 2,
         max: 1005

@@ -35,7 +35,12 @@ const editProduct = async(prod_id,prod_name,price,old_price,cat_name,description
 
 
 const homeProducts = async function(){
-    const products = await Product.find({display_home: 'yes'});
+    const products = await Product.find({display_home: 'Home'});
+    return products;
+}
+
+const shopProducts = async function(){
+    const products = await Product.find({display_home: 'Shop'});
     return products;
 }
 
@@ -60,6 +65,13 @@ const prodInfo = async function(data){
     const prodinfo = await Product.findOne(data);
     return prodinfo;
 }
+
+const searchName = async function(prod_name){
+    const search = await Product.find({prod_name : prod_name});
+    return search;
+}
+
+
 
 
 
@@ -142,6 +154,8 @@ module.exports.allProducts = allProducts;
 module.exports.createCategory = createCategory;
 module.exports.allCategories = allCategories;
 module.exports.prodInfo =prodInfo;
+module.exports.shopProducts = shopProducts;
+module.exports.searchName = searchName;
 
 
 

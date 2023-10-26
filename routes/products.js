@@ -1,10 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const {getCustomDate} = require('../utility_functions/util_func');
-const {createNewProduct,uploadProductImage,deleteProduct,editProduct,homeProducts,allProducts,createCategory,allCategories,prodInfo} = require('../model/ProductHelper');
+const {createNewProduct,uploadProductImage,deleteProduct,editProduct,homeProducts,allProducts,
+    createCategory,allCategories,prodInfo,shopProducts,searchName} = require('../model/ProductHelper');
 const {cloudinary} = require('../utility_functions/cloudinary');
+const home = require('path').resolve('./');
+
+
+
+router.get('/tets', (req,res)=>{
+    res.send('ok');
+})
 
 router.post('/addproduct',(req,res)=>{
+    
     const data = {
         upload_date : getCustomDate(),
         prod_name: req.body.prod_name,
@@ -14,7 +23,9 @@ router.post('/addproduct',(req,res)=>{
         cat_name: req.body.cat_name,
         description: req.body.description,
         display_home: req.body.display_home,
-        image_link: req.body.image_link
+        image_link: req.body.image_link,
+        price_usd: req.body.price_usd,
+        old_price_usd: req.body.old_price_usd
     };
 
     createNewProduct(data).then(feed =>{
@@ -27,31 +38,57 @@ router.post('/addproduct',(req,res)=>{
 });
 
 router.post('/addprodimage',async(req,res)=>{
-    const filestr = req.body.image;
     const prod_id = req.body.prod_id;
+    const image_name = req.body.file_name
+    const datee = Date.now();
+    const localhost = 'http://localhost:3222/products/'
+    const uploadPath = localhost + image_name;
+
+    // try{
+    //     const response = await cloudinary.uploader.
+    //     upload(filestr,{
+    //         upload_preset: 'molenu',
+    //     });
+    //     if(response){
+    //         const image_link = response.secure_url;
+
+    //         uploadProductImage(prod_id,image_link).then(feed =>{
+    //                 if(feed == 'ok'){
+    //                     res.json('Product Image Upload Successful');
+    //                 }else{
+    //                     res.json('Product Image Upload Not Successful 2');
+    //                     }
+    //         })
+    //     }
+        
+        
+    // }catch(error){
+    //     console.log(error)
+    // }
     
 
     try{
-        const response = await cloudinary.uploader.
-        upload(filestr,{
-            upload_preset: 'molenu',
-        });
-        if(response){
-            const image_link = response.secure_url;
-
-            uploadProductImage(prod_id,image_link).then(feed =>{
-                    if(feed == 'ok'){
-                        res.json('Product Image Upload Successful');
-                    }else{
-                        res.json('Product Image Upload Not Successful 2');
-                        }
-            })
+        if(req.files === null){
+            res.json('Product Image Upload Not Successful 2');
+            console.log('not image')
         }
-        
-        
-    }catch(error){
-        console.log(error)
+
+        const file = req.files.image;
+
+        file.mv(home+`/products/${file.name}`,err=>{
+            console.error(err);
+            
+        })
+        await uploadProductImage(prod_id,uploadPath)
+        res.json('Product Image Upload Successful');
+
     }
+    catch(error){
+        console.log('err')
+    }
+
+    
+   
 
     
     
@@ -95,6 +132,11 @@ router.post('/homeproducts',async(req,res)=>{
     res.json(products);
 });
 
+router.post('/shopproducts',async(req,res)=>{
+    const products = await shopProducts();
+    res.json(products);
+});
+
 router.post('/allproducts',async(req,res)=>{
     const allproducts = await allProducts();
     res.json(allproducts);
@@ -127,6 +169,16 @@ router.post('/addcategory',(req,res)=>{
             res.json('No New Category Added');
         }
     })
+});
+
+router.post('/search',async(req,res)=>{
+    const prod_name = req.body.prod_name;
+    const searchRes = await searchName(prod_name);
+    if(searchRes.length > 0){
+        res.json(searchRes);
+    }else{
+        res.json('No product found');
+    }
 });
 
 

@@ -42,6 +42,9 @@ const Cart = new mongoose.Schema({
     size: {
         type: String
     },
+    heights:{
+        type: String
+    },
     qty: {
         type: String
     },

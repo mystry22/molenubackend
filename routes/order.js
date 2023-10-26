@@ -4,19 +4,24 @@ const {saveOrder,getOrder,sumPending,sumWorking,sumReady,sumRejected,getPending,
   getPendingDetails,getReadyDetails,updatePendingOrder,updateWorkingOrder,getWorkingDetails,getSubTotal} = require('../model/OrderModel');
 const {getCartItems,deleteManyCartItems} = require('../model/CartHelper');
 const {toDate,orderNotification,custNotification} = require('../functions/Helper_functions');
+  
 
   router.post('/completeorder',(req,res)=>{
     const ip = req.body.user_ip;
     const ref = req.body.ref;
     const paystack_ref = req.body.paystack_ref;
     const address = req.body.address;
-    const first_name =req.body.first_name;
+    const full_name =req.body.full_name;
     const email = req.body.email;
     const paid = req.body.amount
+    const lga = req.body.lga;
+    const city = req.body.city;
     getCartItems(ip).then(feed =>{
         feed.forEach(doInsert);
         function doInsert(entry){
             const data = {
+                lga:lga,
+                city:city,
                 prod_name: entry.prod_name,
                 prod_id: entry.prod_id,
                 price: entry.price,
@@ -26,11 +31,11 @@ const {toDate,orderNotification,custNotification} = require('../functions/Helper
                 qty: entry.qty,
                 image_link: entry.image_link,
                 ref: ref,
+                heights: entry.heights,
                 phone : req.body.phone,
                 paystack_ref: paystack_ref,
                 order_date: toDate(),
-                first_name : first_name,
-                last_name : req.body.last_name,
+                full_name : full_name,
                 address : address,
                 paid: paid,
                 total: paid,
@@ -41,8 +46,8 @@ const {toDate,orderNotification,custNotification} = require('../functions/Helper
                 if(result == 'ok'){
                    deleteManyCartItems(ip).then(stat =>{
                         if(stat == 'ok'){
-                            orderNotification(first_name,email);
-                            custNotification(first_name,ref,email);
+                            //orderNotification(full_name,email);
+                           // custNotification(full_name,ref,email);
                             res.json('Transaction Completed');
                             
                         }else{
@@ -180,6 +185,11 @@ const {toDate,orderNotification,custNotification} = require('../functions/Helper
       res.json(respo);
     });
   });
+
+  router.post('/getsearch',(req,res)=>{
+    res.json('Hello')
+  });
+
 
 
 

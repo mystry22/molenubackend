@@ -3,8 +3,12 @@ const router = express.Router();
 const {checkExistingCartProd,insertIntoCart,sumCartItems,getCartItems,getSubTotal,deleteCartItem} = require('../model/CartHelper');
 const {getCustomDate} = require('../utility_functions/util_func');
 
-router.post('/addtocart', async(req,res)=>{
+router.post('/ok', async(req,res)=>{
+    res.send('Hello');
+});
 
+router.post('/addtocart', async(req,res)=>{
+    
     const prod_name = req.body.prod_name;
     const prod_id = req.body.prod_id;
     const price = req.body.price;
@@ -13,6 +17,7 @@ router.post('/addtocart', async(req,res)=>{
     const qty = req.body.qty;
     const image_link = req.body.image_link;
     const description = req.body.description;
+    const heights = req.body.heights;
 
     const subtotal = qty*price;
     
@@ -27,7 +32,8 @@ router.post('/addtocart', async(req,res)=>{
         size: size,
         qty: qty,
         image_link: image_link,
-        description: description
+        description: description,
+        heights: heights
     }
 
     checkExistingCartProd(prod_id, user_ip).
@@ -71,7 +77,7 @@ router.post('/getsubtotalosum',(req,res)=>{
     const ip = req.body.ip;
     getSubTotal(ip)
     .then(feed=>{
-        res.send(feed);
+        res.json(feed);
     })
 });
 
@@ -87,6 +93,8 @@ router.post('/deletecartitem', async(req,res)=>{
        res.json('cart item not deleted');
    }
 });
+
+
 
 
 

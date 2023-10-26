@@ -5,12 +5,7 @@ const Order = new mongoose.Schema({
         type: Date,
         
     },
-    first_name: {
-        type: String,
-        min: 2,
-        max: 1005
-    },
-    last_name: {
+    full_name: {
         type: String,
         min: 2,
         max: 1005
@@ -41,6 +36,11 @@ const Order = new mongoose.Schema({
         max: 1005
     },
     prod_name:{
+        type: String,
+        min: 2,
+        max: 1005
+    },
+    heights:{
         type: String,
         min: 2,
         max: 1005
@@ -84,7 +84,7 @@ const Order = new mongoose.Schema({
         min: 2,
         max: 1005
     },
-    bal:{
+    lga:{
         type: String,
         min: 2,
         max: 1005
@@ -95,6 +95,11 @@ const Order = new mongoose.Schema({
         max: 1005
     },
     seen:{
+        type: String,
+        min: 2,
+        max: 1005
+    },
+    city:{
         type: String,
         min: 2,
         max: 1005

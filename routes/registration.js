@@ -27,7 +27,7 @@ router.post('/register',async(req,res)=>{
       }else{
         signup(data);
         const token = await signToken(payload);
-        welcome(email);
+        //welcome(email);
         res.json({msg:'registration okay', token:token});
       }
    
